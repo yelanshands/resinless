@@ -1,0 +1,48 @@
+[gd_scene load_steps=7 format=3 uid="uid://ca7budyrdntl0"]
+
+[ext_resource type="Texture2D" uid="uid://cnhptddcst6nn" path="res://icon.svg" id="1_6q17e"]
+[ext_resource type="Script" uid="uid://csb106jxthfn1" path="res://charScripts/player.gd" id="1_o3ao4"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_3ycbf"]
+size = Vector3(10, 1, 10)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_o3ao4"]
+size = Vector3(10, 1, 10)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_o3ao4"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_o3ao4"]
+
+[node name="test" type="Node3D"]
+
+[node name="floor" type="StaticBody3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="floor"]
+mesh = SubResource("BoxMesh_3ycbf")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="floor"]
+shape = SubResource("BoxShape3D_o3ao4")
+
+[node name="player" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7826135, 0)
+script = ExtResource("1_o3ao4")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="player"]
+visible = false
+mesh = SubResource("CapsuleMesh_o3ao4")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="player"]
+shape = SubResource("CapsuleShape3D_o3ao4")
+
+[node name="Sprite3D" type="Sprite3D" parent="player"]
+billboard = 2
+texture = ExtResource("1_6q17e")
+
+[node name="SpringArm3D" type="SpringArm3D" parent="player"]
+collision_mask = 2
+spring_length = 3.0
+
+[node name="Camera3D" type="Camera3D" parent="player/SpringArm3D"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 7, 0)
