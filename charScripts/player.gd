@@ -4,18 +4,23 @@ extends CharacterBody3D
 @onready var spring_arm_pos: Node3D = $SpringArm3D/Pos
 @onready var doodle: Sprite3D = $doodle
 @onready var camera: Camera3D = $Camera3D
+@onready var click: RayCast3D = $Camera3D/Click
 
 @export var speed: float = 5.0
 @export var jump_height: float = 5.0
 @export var cam_sens: float = 0.004 
+@export var drag_sens: float = 0.05
+@export var reach: float = 10.0
 
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var max_cam_rot: float = 0.15
 var min_cam_rot: float = -0.75
 var last_mouse_pos: Vector2 = Vector2.ZERO
+var mouse_pos: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
-	pass
+	click.target_position = Vector3(0, 0, -reach)
+	click.enabled = true
 
 func _process(_delta: float) -> void:
 	pass
@@ -61,4 +66,13 @@ func _unhandled_input(event):
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 		Input.warp_mouse(last_mouse_pos)
 		
+	if Input.is_action_pressed("left_click"):
+		mouse_pos = get_viewport().get_mouse_position()
+		if click.is_colliding():
+			var object = click.get_collider()
+			if object and object.has_method("on_clicked"):
+				object.on_clicked()
+				if event is InputEventMouseMotion:
+					object.rotation.y += event.relative.x * drag_sens
+				
 		

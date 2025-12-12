@@ -1,7 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://ca7budyrdntl0"]
+[gd_scene load_steps=11 format=3 uid="uid://ca7budyrdntl0"]
 
 [ext_resource type="Texture2D" uid="uid://cnhptddcst6nn" path="res://icon.svg" id="1_6q17e"]
 [ext_resource type="Script" uid="uid://csb106jxthfn1" path="res://charScripts/player.gd" id="1_o3ao4"]
+[ext_resource type="Script" uid="uid://t7djkjhgf2ta" path="res://levelScenes/box.gd" id="1_v08fl"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_3ycbf"]
 size = Vector3(10, 1, 10)
@@ -46,6 +47,8 @@ shape = SubResource("BoxShape3D_v08fl")
 
 [node name="box2" type="StaticBody3D" parent="world"]
 transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 1, -4.5, 1.5, 4.5)
+collision_layer = 5
+script = ExtResource("1_v08fl")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="world/box2"]
 mesh = SubResource("BoxMesh_v08fl")
@@ -60,51 +63,6 @@ transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 1, -4.5, 1.5, 0)
 mesh = SubResource("BoxMesh_v08fl")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="world/box3"]
-shape = SubResource("BoxShape3D_v08fl")
-
-[node name="box4" type="StaticBody3D" parent="world"]
-transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 1, -4.5, 1.5, -4.5)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="world/box4"]
-mesh = SubResource("BoxMesh_v08fl")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="world/box4"]
-shape = SubResource("BoxShape3D_v08fl")
-
-[node name="box5" type="StaticBody3D" parent="world"]
-transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 1.5, -4.5)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="world/box5"]
-mesh = SubResource("BoxMesh_v08fl")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="world/box5"]
-shape = SubResource("BoxShape3D_v08fl")
-
-[node name="box6" type="StaticBody3D" parent="world"]
-transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 1, 4.5, 1.5, -4.5)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="world/box6"]
-mesh = SubResource("BoxMesh_v08fl")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="world/box6"]
-shape = SubResource("BoxShape3D_v08fl")
-
-[node name="box7" type="StaticBody3D" parent="world"]
-transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 1, 4.5, 1.5, 0)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="world/box7"]
-mesh = SubResource("BoxMesh_v08fl")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="world/box7"]
-shape = SubResource("BoxShape3D_v08fl")
-
-[node name="box8" type="StaticBody3D" parent="world"]
-transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 1, 4.5, 1.5, 4.5)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="world/box8"]
-mesh = SubResource("BoxMesh_v08fl")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="world/box8"]
 shape = SubResource("BoxShape3D_v08fl")
 
 [node name="player" type="CharacterBody3D" parent="."]
@@ -127,6 +85,9 @@ visible = false
 mesh = SubResource("BoxMesh_o3ao4")
 
 [node name="Camera3D" type="Camera3D" parent="player"]
+
+[node name="Click" type="RayCast3D" parent="player/Camera3D"]
+collision_mask = 4
 
 [node name="SpringArm3D" type="SpringArm3D" parent="player"]
 collision_mask = 2
