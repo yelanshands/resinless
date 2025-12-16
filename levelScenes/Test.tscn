@@ -86,9 +86,6 @@ mesh = SubResource("BoxMesh_o3ao4")
 
 [node name="Camera3D" type="Camera3D" parent="player"]
 
-[node name="Click" type="RayCast3D" parent="player/Camera3D"]
-collision_mask = 4
-
 [node name="SpringArm3D" type="SpringArm3D" parent="player"]
 collision_mask = 2
 spring_length = 3.0

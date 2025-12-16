@@ -4,23 +4,25 @@ extends CharacterBody3D
 @onready var spring_arm_pos: Node3D = $SpringArm3D/Pos
 @onready var doodle: Sprite3D = $doodle
 @onready var camera: Camera3D = $Camera3D
-@onready var click: RayCast3D = $Camera3D/Click
 
 @export var speed: float = 5.0
 @export var jump_height: float = 5.0
 @export var cam_sens: float = 0.004 
 @export var drag_sens: float = 0.05
-@export var reach: float = 10.0
+@export var reach: float = 15.0
 
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var max_cam_rot: float = 0.15
 var min_cam_rot: float = -0.75
 var last_mouse_pos: Vector2 = Vector2.ZERO
 var mouse_pos: Vector2 = Vector2.ZERO
+var object
+var object_distance: float = 0.0
+var dragging: bool = false
+var rotating: bool = false
 
 func _ready() -> void:
-	click.target_position = Vector3(0, 0, -reach)
-	click.enabled = true
+	pass
 
 func _process(_delta: float) -> void:
 	pass
@@ -54,25 +56,44 @@ func _physics_process(delta: float) -> void:
 	
 	move_and_slide()
 	
-func _unhandled_input(event):
+	if Input.is_action_pressed("left_click"):
+		if not rotating:
+			mouse_pos = get_viewport().get_mouse_position()
+		var ray_origin = camera.project_ray_origin(mouse_pos)
+		if not dragging:
+			var ray_end = ray_origin + camera.project_ray_normal(mouse_pos) * reach
+			var space_state = get_world_3d().direct_space_state
+			var query = PhysicsRayQueryParameters3D.create(ray_origin, ray_end)
+			var result = space_state.intersect_ray(query)
+			if result:
+				object = result.collider
+		print(mouse_pos)
+		if object:
+			if object.has_method("on_clicked"):
+				if not dragging:
+					dragging = true
+					object_distance = camera.global_position.distance_to(object.global_position)
+				if not rotating:
+					object.global_position = lerp(object.global_position, ray_origin + camera.project_ray_normal(mouse_pos) * object_distance, 0.2)
+				else:
+					object.global_position = ray_origin + camera.project_ray_normal(mouse_pos) * object_distance
+	else:
+		dragging = false
+		object = null
+	
+func _input(event):
 	if Input.is_action_pressed("right_click"):
+		rotating = true
 		if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
 			last_mouse_pos = get_viewport().get_mouse_position()
+			if not mouse_pos:
+				mouse_pos = last_mouse_pos
 			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 		if event is InputEventMouseMotion:
 			rotation.y -= event.relative.x * cam_sens
 			spring_arm.rotation.x = clamp(spring_arm.rotation.x - (event.relative.y * cam_sens), min_cam_rot, max_cam_rot)
-	elif Input.mouse_mode != Input.MOUSE_MODE_VISIBLE:
-		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-		Input.warp_mouse(last_mouse_pos)
-		
-	if Input.is_action_pressed("left_click"):
-		mouse_pos = get_viewport().get_mouse_position()
-		if click.is_colliding():
-			var object = click.get_collider()
-			if object and object.has_method("on_clicked"):
-				object.on_clicked()
-				if event is InputEventMouseMotion:
-					object.rotation.y += event.relative.x * drag_sens
-				
-		
+	else:
+		if Input.mouse_mode != Input.MOUSE_MODE_VISIBLE:
+			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+			Input.warp_mouse(last_mouse_pos)
+			rotating = false
