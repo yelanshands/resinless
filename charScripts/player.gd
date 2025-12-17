@@ -67,7 +67,6 @@ func _physics_process(delta: float) -> void:
 			var result = space_state.intersect_ray(query)
 			if result:
 				object = result.collider
-		print(mouse_pos)
 		if object:
 			if object.has_method("on_clicked"):
 				if not dragging:
@@ -81,19 +80,24 @@ func _physics_process(delta: float) -> void:
 		dragging = false
 		object = null
 	
-func _input(event):
 	if Input.is_action_pressed("right_click"):
-		rotating = true
-		if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
+		if not rotating:
+			rotating = true
 			last_mouse_pos = get_viewport().get_mouse_position()
+			print("1 ", get_viewport().get_mouse_position())
 			if not mouse_pos:
 				mouse_pos = last_mouse_pos
 			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-		if event is InputEventMouseMotion:
-			rotation.y -= event.relative.x * cam_sens
-			spring_arm.rotation.x = clamp(spring_arm.rotation.x - (event.relative.y * cam_sens), min_cam_rot, max_cam_rot)
-	else:
-		if Input.mouse_mode != Input.MOUSE_MODE_VISIBLE:
-			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-			Input.warp_mouse(last_mouse_pos)
-			rotating = false
+	elif rotating:
+		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+		Input.warp_mouse(last_mouse_pos)
+		rotating = false
+		print("2 ", get_viewport().get_mouse_position())
+		# TS PMO IM GENUINELY REACHING SOLID STATE HELP ME 
+		
+	print("uhhhh ", get_viewport().get_mouse_position(), " ", Input.mouse_mode, " ", rotating, " ")
+	
+func _input(event):
+	if rotating and event is InputEventMouseMotion:
+		rotation.y -= event.relative.x * cam_sens
+		spring_arm.rotation.x = clamp(spring_arm.rotation.x - (event.relative.y * cam_sens), min_cam_rot, max_cam_rot)
