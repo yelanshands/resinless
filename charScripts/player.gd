@@ -20,19 +20,25 @@ var object
 var object_distance: float = 0.0
 var dragging: bool = false
 var rotating: bool = false
+var interacting: bool = true
+var switch_delay: bool = false
 
 func _ready() -> void:
 	pass
 
 func _process(_delta: float) -> void:
-	pass
-	#if Input.is_action_pressed("ui_cancel"):
-		#if not get_tree().paused:
-			#Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-	#if Input.is_action_pressed("left_click"):
-		#if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
-			#Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-			#get_viewport().set_input_as_handled()
+	if Input.is_action_pressed("left_click"):
+		if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
+			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+			interacting = false
+			get_viewport().set_input_as_handled()
+	if Input.is_action_just_pressed("right_click") and not interacting:
+		if not get_tree().paused:
+			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+			interacting = true
+			switch_delay = true
+			await get_tree().process_frame
+			switch_delay = false
 
 func _physics_process(delta: float) -> void:
 	var input = Input.get_vector("strafe_left", "strafe_right", "move_forward", "move_back")
@@ -56,7 +62,7 @@ func _physics_process(delta: float) -> void:
 	
 	move_and_slide()
 	
-	if Input.is_action_pressed("left_click"):
+	if Input.is_action_pressed("right_click") and interacting:
 		if not rotating:
 			mouse_pos = get_viewport().get_mouse_position()
 		var ray_origin = camera.project_ray_origin(mouse_pos)
@@ -80,24 +86,27 @@ func _physics_process(delta: float) -> void:
 		dragging = false
 		object = null
 	
-	if Input.is_action_pressed("right_click"):
-		if not rotating:
-			rotating = true
-			last_mouse_pos = get_viewport().get_mouse_position()
-			print("1 ", get_viewport().get_mouse_position())
-			if not mouse_pos:
-				mouse_pos = last_mouse_pos
-			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	elif rotating:
-		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-		Input.warp_mouse(last_mouse_pos)
-		rotating = false
-		print("2 ", get_viewport().get_mouse_position())
-		# TS PMO IM GENUINELY REACHING SOLID STATE HELP ME 
-		
-	print("uhhhh ", get_viewport().get_mouse_position(), " ", Input.mouse_mode, " ", rotating, " ")
+	#if Input.is_action_pressed("right_click"):
+		#if not rotating:
+			#rotating = true
+			#last_mouse_pos = get_viewport().get_mouse_position()
+			#print("1 ", get_viewport().get_mouse_position())
+			#if not mouse_pos:
+				#mouse_pos = last_mouse_pos
+			#Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	#elif rotating and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+		#Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
+	#elif rotating and Input.get_mouse_mode() == Input.MOUSE_MODE_HIDDEN:
+		#for i in 2:
+			#await get_tree().process_frame
+		#Input.warp_mouse(last_mouse_pos)
+		#Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+		#rotating = false
+		#print("2 ", get_viewport().get_mouse_position())
+		#
+	#print("uhhhh ", get_viewport().get_mouse_position(), " ", Input.mouse_mode, " ", rotating, " ")
 	
 func _input(event):
-	if rotating and event is InputEventMouseMotion:
+	if not switch_delay and event is InputEventMouseMotion:
 		rotation.y -= event.relative.x * cam_sens
 		spring_arm.rotation.x = clamp(spring_arm.rotation.x - (event.relative.y * cam_sens), min_cam_rot, max_cam_rot)
