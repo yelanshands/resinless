@@ -4,7 +4,12 @@ extends CharacterBody3D
 @onready var spring_arm_pos: Node3D = $SpringArm3D/Pos
 @onready var doodle: Sprite3D = $doodle
 @onready var camera: Camera3D = $Camera3D
+@onready var collision: CollisionShape3D = $collision
+@onready var health: HBoxContainer = $"../CanvasLayer/Control/Health"
+@onready var hp_texture: TextureRect = $"../CanvasLayer/Control/Health/1"
 
+@export var max_hp: int = 5
+@export var hp: int = max_hp
 @export var speed: float = 5.0
 @export var jump_height: float = 5.0
 @export var cam_sens: float = 0.004 
@@ -23,10 +28,13 @@ var rotating: bool = false
 var interacting: bool = true
 var switch_delay: bool = false
 
+
 func _ready() -> void:
-	pass
+	for i in (max_hp - 1):
+		health.add_child(hp_texture.duplicate())
 
 func _process(_delta: float) -> void:
+	collision.rotation = doodle.rotation
 	if Input.is_action_pressed("left_click"):
 		if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
 			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -62,7 +70,7 @@ func _physics_process(delta: float) -> void:
 	
 	move_and_slide()
 	
-	if Input.is_action_pressed("right_click") and interacting:
+	if (Input.is_action_pressed("right_click") and interacting) or Input.is_action_just_pressed("consume"):
 		if not rotating:
 			mouse_pos = get_viewport().get_mouse_position()
 		var ray_origin = camera.project_ray_origin(mouse_pos)
@@ -74,14 +82,19 @@ func _physics_process(delta: float) -> void:
 			if result:
 				object = result.collider
 		if object:
-			if object.has_method("on_clicked"):
-				if not dragging:
-					dragging = true
-					object_distance = camera.global_position.distance_to(object.global_position)
-				if not rotating:
-					object.global_position = lerp(object.global_position, ray_origin + camera.project_ray_normal(mouse_pos) * object_distance, 0.2)
-				else:
-					object.global_position = ray_origin + camera.project_ray_normal(mouse_pos) * object_distance
+			if Input.is_action_just_pressed("consume"):
+				if object.has_method("consumed"):
+					object.consumed(self)
+			elif Input.is_action_pressed("right_click"):
+				if object.has_method("on_clicked"):
+					object.on_clicked()
+					if not dragging:
+						dragging = true
+						object_distance = camera.global_position.distance_to(object.global_position)
+					if not rotating:
+						object.global_position = lerp(object.global_position, ray_origin + camera.project_ray_normal(mouse_pos) * object_distance, 0.2)
+					else:
+						object.global_position = ray_origin + camera.project_ray_normal(mouse_pos) * object_distance
 	else:
 		dragging = false
 		object = null
@@ -110,3 +123,7 @@ func _input(event):
 	if not switch_delay and event is InputEventMouseMotion:
 		rotation.y -= event.relative.x * cam_sens
 		spring_arm.rotation.x = clamp(spring_arm.rotation.x - (event.relative.y * cam_sens), min_cam_rot, max_cam_rot)
+
+func health_modify(amount: int):
+	if hp + amount <= max_hp:
+		hp += amount
