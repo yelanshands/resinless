@@ -6,7 +6,7 @@ extends CharacterBody3D
 @onready var camera: Camera3D = $Camera3D
 @onready var collision: CollisionShape3D = $collision
 @onready var health: HBoxContainer = $"../CanvasLayer/Control/Health"
-@onready var hp_texture: TextureRect = $"../CanvasLayer/Control/Health/1"
+@onready var hp_texture: TextureRect = $"../CanvasLayer/Control/Health/1".duplicate()
 
 @export var max_hp: int = 5
 @export var hp: int = max_hp
@@ -27,11 +27,13 @@ var dragging: bool = false
 var rotating: bool = false
 var interacting: bool = true
 var switch_delay: bool = false
-
+var hps = []
 
 func _ready() -> void:
-	for i in (max_hp - 1):
-		health.add_child(hp_texture.duplicate())
+	hps.append($"../CanvasLayer/Control/Health/1")
+	for i in (max_hp-1):
+		hps.append(hp_texture.duplicate())
+		health.add_child(hps[i+1])
 
 func _process(_delta: float) -> void:
 	collision.rotation = doodle.rotation
@@ -127,3 +129,11 @@ func _input(event):
 func health_modify(amount: int):
 	if hp + amount <= max_hp:
 		hp += amount
+		if amount > 0:
+			for i in amount:
+				hps[hp-amount+i].visible = true
+		elif amount < 0:
+			for i in -amount:
+				print(hp, " ", amount, " ", i, " ", hps)
+				hps[hp-amount-i].visible = false
+		

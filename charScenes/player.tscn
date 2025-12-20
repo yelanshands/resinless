@@ -1,0 +1,39 @@
+[gd_scene load_steps=6 format=3 uid="uid://btkekl8rpf317"]
+
+[ext_resource type="Script" uid="uid://csb106jxthfn1" path="res://charScripts/player.gd" id="1_naiu8"]
+[ext_resource type="Texture2D" uid="uid://cnhptddcst6nn" path="res://icon.svg" id="2_3d2w5"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_purvm"]
+size = Vector3(1.25, 1.25, 0.1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_o3ao4"]
+radius = 0.75
+height = 1.5
+
+[sub_resource type="BoxMesh" id="BoxMesh_o3ao4"]
+
+[node name="player" type="CharacterBody3D"]
+script = ExtResource("1_naiu8")
+
+[node name="collision" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_purvm")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+visible = false
+mesh = SubResource("CapsuleMesh_o3ao4")
+
+[node name="doodle" type="Sprite3D" parent="."]
+texture = ExtResource("2_3d2w5")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="doodle"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.25, 0, 0)
+visible = false
+mesh = SubResource("BoxMesh_o3ao4")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+
+[node name="SpringArm3D" type="SpringArm3D" parent="."]
+collision_mask = 2
+spring_length = 3.0
+
+[node name="Pos" type="Node3D" parent="SpringArm3D"]

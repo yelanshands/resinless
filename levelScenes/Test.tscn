@@ -1,9 +1,22 @@
-[gd_scene load_steps=14 format=3 uid="uid://ca7budyrdntl0"]
+[gd_scene load_steps=15 format=3 uid="uid://ca7budyrdntl0"]
 
 [ext_resource type="Texture2D" uid="uid://cnhptddcst6nn" path="res://icon.svg" id="1_6q17e"]
-[ext_resource type="Script" uid="uid://csb106jxthfn1" path="res://charScripts/player.gd" id="1_o3ao4"]
-[ext_resource type="Script" uid="uid://t7djkjhgf2ta" path="res://levelScenes/box.gd" id="1_v08fl"]
-[ext_resource type="Script" uid="uid://c8bn0b0an5671" path="res://levelScenes/food.gd" id="2_purvm"]
+[ext_resource type="Script" uid="uid://t7djkjhgf2ta" path="res://charScripts/box.gd" id="1_v08fl"]
+[ext_resource type="Script" uid="uid://c8bn0b0an5671" path="res://charScripts/food.gd" id="2_purvm"]
+[ext_resource type="PackedScene" uid="uid://btkekl8rpf317" path="res://charScenes/player.tscn" id="3_purvm"]
+[ext_resource type="PackedScene" uid="uid://qdcp781qpjee" path="res://charScenes/lamb.tscn" id="5_cxlql"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_purvm"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_cxlql"]
+sky_material = SubResource("ProceduralSkyMaterial_purvm")
+
+[sub_resource type="Environment" id="Environment_tn6pu"]
+background_mode = 2
+sky = SubResource("Sky_cxlql")
+tonemap_mode = 2
 
 [sub_resource type="BoxMesh" id="BoxMesh_3ycbf"]
 size = Vector3(10, 1, 10)
@@ -24,16 +37,10 @@ height = 0.25
 height = 0.25
 radius = 0.25
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_purvm"]
-size = Vector3(1.25, 1.25, 0.1)
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_o3ao4"]
-radius = 0.75
-height = 1.5
-
-[sub_resource type="BoxMesh" id="BoxMesh_o3ao4"]
-
 [node name="test" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_tn6pu")
 
 [node name="world" type="Node3D" parent="."]
 
@@ -84,35 +91,8 @@ mesh = SubResource("CylinderMesh_purvm")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="world/food"]
 shape = SubResource("CylinderShape3D_cxlql")
 
-[node name="player" type="CharacterBody3D" parent="."]
+[node name="player" parent="." instance=ExtResource("3_purvm")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7826135, 0)
-script = ExtResource("1_o3ao4")
-
-[node name="collision" type="CollisionShape3D" parent="player"]
-shape = SubResource("BoxShape3D_purvm")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="player"]
-visible = false
-mesh = SubResource("CapsuleMesh_o3ao4")
-
-[node name="doodle" type="Sprite3D" parent="player"]
-texture = ExtResource("1_6q17e")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="player/doodle"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.25, 0, 0)
-visible = false
-mesh = SubResource("BoxMesh_o3ao4")
-
-[node name="Camera3D" type="Camera3D" parent="player"]
-
-[node name="SpringArm3D" type="SpringArm3D" parent="player"]
-collision_mask = 2
-spring_length = 3.0
-
-[node name="Pos" type="Node3D" parent="player/SpringArm3D"]
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 7, 0)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -139,3 +119,6 @@ mouse_filter = 2
 texture = ExtResource("1_6q17e")
 expand_mode = 3
 stretch_mode = 4
+
+[node name="lamb" parent="." instance=ExtResource("5_cxlql")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5436456, 1.9476359)
