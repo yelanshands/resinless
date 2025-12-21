@@ -5,16 +5,20 @@ extends CharacterBody3D
 @onready var doodle: Sprite3D = $doodle
 @onready var camera: Camera3D = $Camera3D
 @onready var collision: CollisionShape3D = $collision
-@onready var health: HBoxContainer = $"../CanvasLayer/Control/Health"
-@onready var hp_texture: TextureRect = $"../CanvasLayer/Control/Health/1".duplicate()
+@onready var health: HBoxContainer = $"CanvasLayer/Control/Health"
+@onready var hp_texture: TextureRect = $"CanvasLayer/Control/Health/1".duplicate()
+@onready var hit: Area3D = $Hit
+@onready var hit_window: Timer = $Hit/HitWindow
+@onready var weapon: Sprite3D = $Weapon
 
 @export var max_hp: int = 5
-@export var hp: int = max_hp
+var hp: int = max_hp
 @export var speed: float = 5.0
 @export var jump_height: float = 5.0
 @export var cam_sens: float = 0.004 
 @export var drag_sens: float = 0.05
 @export var reach: float = 15.0
+@export var atk: int = 1
 
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var max_cam_rot: float = 0.15
@@ -30,18 +34,23 @@ var switch_delay: bool = false
 var hps = []
 
 func _ready() -> void:
-	hps.append($"../CanvasLayer/Control/Health/1")
+	hps.append($"CanvasLayer/Control/Health/1")
 	for i in (max_hp-1):
 		hps.append(hp_texture.duplicate())
 		health.add_child(hps[i+1])
 
 func _process(_delta: float) -> void:
 	collision.rotation = doodle.rotation
-	if Input.is_action_pressed("left_click"):
+	if Input.is_action_just_pressed("left_click"):
 		if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
 			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 			interacting = false
 			get_viewport().set_input_as_handled()
+		elif not hit.monitoring:
+			hit.monitoring = true
+			weapon.rotation_degrees.y = 0.0
+			weapon.visible = true
+			hit_window.start(0.1)
 	if Input.is_action_just_pressed("right_click") and not interacting:
 		if not get_tree().paused:
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
@@ -49,6 +58,8 @@ func _process(_delta: float) -> void:
 			switch_delay = true
 			await get_tree().process_frame
 			switch_delay = false
+	if hit.monitoring:
+		weapon.rotation_degrees.y += 30.0
 
 func _physics_process(delta: float) -> void:
 	var input = Input.get_vector("strafe_left", "strafe_right", "move_forward", "move_back")
@@ -121,12 +132,12 @@ func _physics_process(delta: float) -> void:
 		#
 	#print("uhhhh ", get_viewport().get_mouse_position(), " ", Input.mouse_mode, " ", rotating, " ")
 	
-func _input(event):
+func _input(event) -> void:
 	if not switch_delay and event is InputEventMouseMotion:
 		rotation.y -= event.relative.x * cam_sens
 		spring_arm.rotation.x = clamp(spring_arm.rotation.x - (event.relative.y * cam_sens), min_cam_rot, max_cam_rot)
 
-func health_modify(amount: int):
+func health_modify(amount: int) -> void:
 	if hp + amount <= max_hp:
 		hp += amount
 		if amount > 0:
@@ -134,6 +145,13 @@ func health_modify(amount: int):
 				hps[hp-amount+i].visible = true
 		elif amount < 0:
 			for i in -amount:
-				print(hp, " ", amount, " ", i, " ", hps)
 				hps[hp-amount-i].visible = false
-		
+
+func _on_hit_window_timeout() -> void:
+	hit.monitoring = false
+	weapon.visible = false
+
+func _on_hit_body_entered(body: Node3D) -> void:
+	print(body)
+	if body.has_method("hit"):
+		body.hit(atk)

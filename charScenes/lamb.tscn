@@ -9,7 +9,7 @@ height = 1.5
 height = 1.5
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_n01ai"]
-size = Vector3(1, 1.5, 1)
+size = Vector3(1.25, 1.5, 1)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mwnrg"]
 albedo_color = Color(0.15946764, 0.11460504, 0.026103096, 1)
@@ -41,7 +41,7 @@ radius = 0.3
 height = 0.7
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_70uu0"]
-size = Vector3(0.6, 0.75, 0.67)
+size = Vector3(0.6, 0.75, 1)
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_ov282"]
 radius = 0.175
@@ -57,7 +57,7 @@ size = Vector3(0.2, 0.3, 0.1)
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_n32g7"]
 data = PackedVector3Array(0, 0.14999999, 0.049999997, 0.099999994, -0.14999999, 0.049999997, -0.099999994, -0.14999999, 0.049999997, 0, 0.14999999, -0.049999997, -0.099999994, -0.14999999, -0.049999997, 0.099999994, -0.14999999, -0.049999997, 0, 0.14999999, 0.049999997, 0, 0.14999999, -0.049999997, 0.099999994, -0.14999999, 0.049999997, 0, 0.14999999, -0.049999997, 0.099999994, -0.14999999, -0.049999997, 0.099999994, -0.14999999, 0.049999997, 0, 0.14999999, -0.049999997, 0, 0.14999999, 0.049999997, -0.099999994, -0.14999999, -0.049999997, 0, 0.14999999, 0.049999997, -0.099999994, -0.14999999, 0.049999997, -0.099999994, -0.14999999, -0.049999997, -0.099999994, -0.14999999, 0.049999997, 0.099999994, -0.14999999, 0.049999997, -0.099999994, -0.14999999, -0.049999997, 0.099999994, -0.14999999, 0.049999997, 0.099999994, -0.14999999, -0.049999997, -0.099999994, -0.14999999, -0.049999997)
 
-[node name="lamb" type="StaticBody3D"]
+[node name="lamb" type="RigidBody3D"]
 script = ExtResource("1_n01ai")
 
 [node name="body" type="MeshInstance3D" parent="."]
@@ -71,7 +71,7 @@ shape = SubResource("CapsuleShape3D_n32g7")
 disabled = true
 
 [node name="CollisionShape3D11" type="CollisionShape3D" parent="."]
-transform = Transform3D(1.9106855e-15, 4.371139e-08, 1, 1, -4.371139e-08, 0, 4.371139e-08, 1, -4.371139e-08, 0, 0.75, 0)
+transform = Transform3D(1.9106855e-15, 4.371139e-08, 1, 1, -4.371139e-08, 0, 4.371139e-08, 1, -4.371139e-08, 0, 0.625, 0)
 shape = SubResource("BoxShape3D_n01ai")
 
 [node name="leg1" type="MeshInstance3D" parent="."]

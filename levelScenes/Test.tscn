@@ -1,8 +1,7 @@
-[gd_scene load_steps=15 format=3 uid="uid://ca7budyrdntl0"]
+[gd_scene load_steps=12 format=3 uid="uid://ca7budyrdntl0"]
 
-[ext_resource type="Texture2D" uid="uid://cnhptddcst6nn" path="res://icon.svg" id="1_6q17e"]
 [ext_resource type="Script" uid="uid://t7djkjhgf2ta" path="res://charScripts/box.gd" id="1_v08fl"]
-[ext_resource type="Script" uid="uid://c8bn0b0an5671" path="res://charScripts/food.gd" id="2_purvm"]
+[ext_resource type="PackedScene" uid="uid://bid7f7d5y1s3" path="res://charScenes/mutton.tscn" id="2_purvm"]
 [ext_resource type="PackedScene" uid="uid://btkekl8rpf317" path="res://charScenes/player.tscn" id="3_purvm"]
 [ext_resource type="PackedScene" uid="uid://qdcp781qpjee" path="res://charScenes/lamb.tscn" id="5_cxlql"]
 
@@ -28,15 +27,6 @@ size = Vector3(10, 1, 10)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_v08fl"]
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_purvm"]
-top_radius = 0.25
-bottom_radius = 0.25
-height = 0.25
-
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_cxlql"]
-height = 0.25
-radius = 0.25
-
 [node name="test" type="Node3D"]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -61,8 +51,8 @@ mesh = SubResource("BoxMesh_v08fl")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="world/box"]
 shape = SubResource("BoxShape3D_v08fl")
 
-[node name="box2" type="StaticBody3D" parent="world"]
-transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 1, -4.5, 1.5, 4.5)
+[node name="box2" type="RigidBody3D" parent="world"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 1.5, 4.5)
 collision_layer = 5
 script = ExtResource("1_v08fl")
 
@@ -81,44 +71,12 @@ mesh = SubResource("BoxMesh_v08fl")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="world/box3"]
 shape = SubResource("BoxShape3D_v08fl")
 
-[node name="food" type="StaticBody3D" parent="world"]
+[node name="mutton" parent="world" instance=ExtResource("2_purvm")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
-script = ExtResource("2_purvm")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="world/food"]
-mesh = SubResource("CylinderMesh_purvm")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="world/food"]
-shape = SubResource("CylinderShape3D_cxlql")
 
 [node name="player" parent="." instance=ExtResource("3_purvm")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7826135, 0)
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="Control" type="Control" parent="CanvasLayer"]
-layout_mode = 3
-anchors_preset = 0
-offset_left = 50.0
-offset_top = 50.0
-offset_right = 90.0
-offset_bottom = 90.0
-mouse_filter = 2
-
-[node name="Health" type="HBoxContainer" parent="CanvasLayer/Control"]
-custom_minimum_size = Vector2(0, 75)
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-mouse_filter = 2
-
-[node name="1" type="TextureRect" parent="CanvasLayer/Control/Health"]
-texture_repeat = 2
-layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("1_6q17e")
-expand_mode = 3
-stretch_mode = 4
-
 [node name="lamb" parent="." instance=ExtResource("5_cxlql")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5436456, 1.9476359)
+collision_layer = 3
