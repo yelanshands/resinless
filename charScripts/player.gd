@@ -9,7 +9,7 @@ extends CharacterBody3D
 @onready var hp_texture: TextureRect = $"CanvasLayer/Control/Health/1".duplicate()
 @onready var hit: Area3D = $Hit
 @onready var hit_window: Timer = $Hit/HitWindow
-@onready var weapon: Sprite3D = $Weapon
+@onready var weapon: Sprite3D = $doodle/Weapon
 
 @export var max_hp: int = 5
 var hp: int = max_hp
@@ -19,6 +19,7 @@ var hp: int = max_hp
 @export var drag_sens: float = 0.05
 @export var reach: float = 15.0
 @export var atk: int = 1
+@export var flatten_speed: float = 0.2
 
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var max_cam_rot: float = 0.15
@@ -31,16 +32,31 @@ var dragging: bool = false
 var rotating: bool = false
 var interacting: bool = true
 var switch_delay: bool = false
-var hps = []
+var hps: Array[TextureRect] = []
+var flattened: bool = false
+var flattened_recovering: int = 0
+var prerecover_pos: float
+var height: float
 
 func _ready() -> void:
 	hps.append($"CanvasLayer/Control/Health/1")
 	for i in (max_hp-1):
 		hps.append(hp_texture.duplicate())
 		health.add_child(hps[i+1])
+	height = collision.shape.size.y
 
 func _process(_delta: float) -> void:
 	collision.rotation = doodle.rotation
+	if flattened_recovering:
+		global_position.y = lerp(global_position.y, prerecover_pos + height, flatten_speed*0.75)
+		flattened_recovering += 1
+		if flattened_recovering >= 10:
+			flattened_recovering = 0
+	if flattened:
+		doodle.global_rotation.x = lerp_angle(doodle.global_rotation.x, -PI/2, flatten_speed)
+	else:
+		doodle.global_rotation.x = lerp_angle(doodle.global_rotation.x, 0.0, flatten_speed)
+		
 	if Input.is_action_just_pressed("left_click"):
 		if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
 			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -60,7 +76,7 @@ func _process(_delta: float) -> void:
 			switch_delay = false
 	if hit.monitoring:
 		weapon.rotation_degrees.y += 30.0
-
+		
 func _physics_process(delta: float) -> void:
 	var input = Input.get_vector("strafe_left", "strafe_right", "move_forward", "move_back")
 	var movement_dir = (transform.basis * Vector3(input.x, 0, input.y)).normalized()
@@ -76,8 +92,8 @@ func _physics_process(delta: float) -> void:
 	if is_on_floor():
 		if Input.is_action_just_pressed("jump"):
 			velocity.y = jump_height
-		else:
-			velocity.y = 0.0
+		#else:
+			#velocity.y = 0.0
 	else:
 		velocity.y -= gravity * delta
 	
@@ -111,6 +127,12 @@ func _physics_process(delta: float) -> void:
 	else:
 		dragging = false
 		object = null
+		
+	if Input.is_action_just_pressed("flatten"):
+		if flattened:
+			prerecover_pos = global_position.y
+			flattened_recovering = 1
+		flattened = not flattened
 	
 	#if Input.is_action_pressed("right_click"):
 		#if not rotating:
