@@ -2,12 +2,18 @@ extends RigidBody3D
 const mutton = preload("uid://bid7f7d5y1s3")
 
 @onready var player: CharacterBody3D = get_parent().get_node("player")
+@onready var hitter: Area3D = $hitter
+@onready var hit_cooldown: Timer = $hitter/hit_cooldown
+@onready var lunge_cooldown: Timer = $lunge_cooldown
 
 @export var max_hp: int = 5
 var hp: int = max_hp
+@export var speed: float = 0.01
+@export var atk_speed: float = 1.0
+@export var lunge_cd: float = 3.0
+@export var sight_dist: float = 7.0
 
 var drop_y_offset: float = 0.5
-var sight_dist: float = 5.0
 var idling: bool = true
 
 func _physics_process(_delta: float) -> void:
@@ -20,18 +26,25 @@ func _physics_process(_delta: float) -> void:
 		if result:
 			if result.collider == player:
 				idling = false
-				global_rotation.y = lerp_angle(global_rotation.y, -(Vector2(pos.x, pos.z)-Vector2(player_pos.x, player_pos.z)).angle()+0.5*PI, 0.2)
 			else:
-				#print("1 ", result.collider)
 				idling = true
 		else:
-			#print("2")
 			idling = true
 	else:
-		#print("3")
 		idling = true
 		
-	print(idling)
+	if not idling:
+		hitter.monitoring = true
+		global_rotation.x = lerp_angle(global_rotation.x, 0.0, 0.2)
+		global_rotation.z = lerp_angle(global_rotation.z, 0.0, 0.2)
+		global_rotation.y = lerp_angle(global_rotation.y, -(Vector2(pos.x, pos.z)-Vector2(player_pos.x, player_pos.z)).angle()+0.5*PI, 0.2)
+		global_position += -global_transform.basis.z * speed
+		if lunge_cooldown.is_stopped():
+			apply_central_impulse(Vector3(0.0, 1.5, 0.0))
+			apply_central_impulse(-global_transform.basis.z * speed * 500.0)
+			lunge_cooldown.start(lunge_cd)
+	else:
+		hitter.monitoring = false
 
 func on_clicked() -> void:
 	print("clicked!")
@@ -49,3 +62,8 @@ func die() -> void:
 	mutton_drop.apply_central_impulse(Vector3(0.0, 2.5, 0.0))
 	queue_free()
 	
+func _on_hitter_body_entered(body: Node3D) -> void:
+	if body.has_method("health_modify"):
+		if hit_cooldown.is_stopped():
+			body.health_modify(-1)
+			hit_cooldown.start(atk_speed)

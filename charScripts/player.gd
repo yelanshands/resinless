@@ -167,7 +167,7 @@ func health_modify(amount: int) -> void:
 				hps[hp-amount+i].visible = true
 		elif amount < 0:
 			for i in -amount:
-				hps[hp-amount-i].visible = false
+				hps[hp-amount-i-1].visible = false
 
 func _on_hit_window_timeout() -> void:
 	hit.monitoring = false
