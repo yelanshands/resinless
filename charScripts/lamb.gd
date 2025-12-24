@@ -18,6 +18,9 @@ var idling: bool = true
 
 func _physics_process(_delta: float) -> void:
 	var pos = global_position
+	if not is_instance_valid(player):
+		player = get_parent().get_node("player")
+		print(player)
 	var player_pos = player.global_position
 	if pos.distance_to(player_pos) <= sight_dist:
 		var space_state = get_world_3d().direct_space_state

@@ -1,5 +1,7 @@
 extends CharacterBody3D
 
+const PLAYER = preload("uid://btkekl8rpf317")
+
 @onready var spring_arm: SpringArm3D = $SpringArm3D
 @onready var spring_arm_pos: Node3D = $SpringArm3D/Pos
 @onready var doodle: Sprite3D = $doodle
@@ -83,8 +85,15 @@ func _physics_process(delta: float) -> void:
 	if movement_dir:
 		var move_angle = lerp_angle(0.0, atan2(movement_dir.x, movement_dir.z), 0.6)
 		doodle.rotation.y = lerp_angle(doodle.rotation.y, move_angle, 0.15)
+		
 	velocity.x = movement_dir.x * speed
 	velocity.z = movement_dir.z * speed
+	
+	if Input.is_action_just_pressed("flatten"):
+		if flattened:
+			prerecover_pos = global_position.y
+			flattened_recovering = 1
+		flattened = not flattened
 	
 	camera.global_position = lerp(camera.global_position, spring_arm_pos.global_position, 0.05)
 	camera.rotation.x = lerp_angle(camera.rotation.x, spring_arm.rotation.x, 0.05)
@@ -127,12 +136,6 @@ func _physics_process(delta: float) -> void:
 	else:
 		dragging = false
 		object = null
-		
-	if Input.is_action_just_pressed("flatten"):
-		if flattened:
-			prerecover_pos = global_position.y
-			flattened_recovering = 1
-		flattened = not flattened
 	
 	#if Input.is_action_pressed("right_click"):
 		#if not rotating:
@@ -168,6 +171,11 @@ func health_modify(amount: int) -> void:
 		elif amount < 0:
 			for i in -amount:
 				hps[hp-amount-i-1].visible = false
+	if hp <= 0:
+		var player = PLAYER.instantiate()
+		get_parent().add_child(player)
+		player.name = "player"
+		queue_free()
 
 func _on_hit_window_timeout() -> void:
 	hit.monitoring = false
