@@ -3,10 +3,10 @@ extends RigidBody3D
 @export var value: int = 1
 
 func on_clicked() -> void:
-	print("clicked!")
+	print(name + "clicked!")
 
 func consumed(consumer: Object) -> void:
-	print("consumed!")
+	print(name + "consumed!")
 	if consumer.has_method("health_modify"):
 		consumer.health_modify(value)
 	queue_free()

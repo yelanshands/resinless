@@ -162,9 +162,6 @@ monitorable = false
 [node name="CollisionShape3D" type="CollisionShape3D" parent="hitter"]
 shape = SubResource("SphereShape3D_n01ai")
 
-[node name="hit_cooldown" type="Timer" parent="hitter"]
-one_shot = true
-
 [node name="lunge_cooldown" type="Timer" parent="."]
 wait_time = 3.0
 one_shot = true

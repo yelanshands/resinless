@@ -39,8 +39,11 @@ var flattened: bool = false
 var flattened_recovering: int = 0
 var prerecover_pos: float
 var height: float
+var starting_pos: Vector3
 
 func _ready() -> void:
+	starting_pos = global_position
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	hps.append($"CanvasLayer/Control/Health/1")
 	for i in (max_hp-1):
 		hps.append(hp_texture.duplicate())
@@ -174,7 +177,10 @@ func health_modify(amount: int) -> void:
 	if hp <= 0:
 		var player = PLAYER.instantiate()
 		get_parent().add_child(player)
+		name = "p"
 		player.name = "player"
+		player.global_position = starting_pos
+		player.starting_pos = starting_pos
 		queue_free()
 
 func _on_hit_window_timeout() -> void:

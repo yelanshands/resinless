@@ -3,7 +3,6 @@ const mutton = preload("uid://bid7f7d5y1s3")
 
 @onready var player: CharacterBody3D = get_parent().get_node("player")
 @onready var hitter: Area3D = $hitter
-@onready var hit_cooldown: Timer = $hitter/hit_cooldown
 @onready var lunge_cooldown: Timer = $lunge_cooldown
 
 @export var max_hp: int = 5
@@ -19,6 +18,7 @@ var idling: bool = true
 func _physics_process(_delta: float) -> void:
 	var pos = global_position
 	if not is_instance_valid(player):
+		print(get_parent().get_tree_string_pretty())
 		player = get_parent().get_node("player")
 		print(player)
 	var player_pos = player.global_position
@@ -35,22 +35,23 @@ func _physics_process(_delta: float) -> void:
 			idling = true
 	else:
 		idling = true
-		
+	
+	if hitter.monitoring and abs(linear_velocity.y) <= 0.01:
+		hitter.monitoring = false
+	
 	if not idling:
-		hitter.monitoring = true
 		global_rotation.x = lerp_angle(global_rotation.x, 0.0, 0.2)
 		global_rotation.z = lerp_angle(global_rotation.z, 0.0, 0.2)
 		global_rotation.y = lerp_angle(global_rotation.y, -(Vector2(pos.x, pos.z)-Vector2(player_pos.x, player_pos.z)).angle()+0.5*PI, 0.2)
 		global_position += -global_transform.basis.z * speed
 		if lunge_cooldown.is_stopped():
+			hitter.monitoring = true
 			apply_central_impulse(Vector3(0.0, 1.5, 0.0))
 			apply_central_impulse(-global_transform.basis.z * speed * 500.0)
 			lunge_cooldown.start(lunge_cd)
-	else:
-		hitter.monitoring = false
 
 func on_clicked() -> void:
-	print("clicked!")
+	print(name + "clicked!")
 	
 func hit(amount: int) -> void:
 	hp -= amount
@@ -67,6 +68,5 @@ func die() -> void:
 	
 func _on_hitter_body_entered(body: Node3D) -> void:
 	if body.has_method("health_modify"):
-		if hit_cooldown.is_stopped():
-			body.health_modify(-1)
-			hit_cooldown.start(atk_speed)
+		body.health_modify(-1)
+		set_deferred("monitoring", false)
