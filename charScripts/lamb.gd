@@ -17,17 +17,26 @@ var idling: bool = true
 
 func _physics_process(_delta: float) -> void:
 	var pos = global_position
+	var target_pos: Vector3
+	var grass: RigidBody3D
 	if not is_instance_valid(player):
 		print(get_parent().get_tree_string_pretty())
 		player = get_parent().get_node("player")
 		print(player)
 	var player_pos = player.global_position
 	if pos.distance_to(player_pos) <= sight_dist:
+		target_pos = player_pos
+	if get_parent().has_node("grass"):
+		grass = get_parent().get_node("grass")
+		var grass_pos = grass.global_position
+		if pos.distance_to(grass_pos) <= pos.distance_to(player_pos):
+			target_pos = grass_pos
+	if target_pos:
 		var space_state = get_world_3d().direct_space_state
-		var query = PhysicsRayQueryParameters3D.create(pos, player_pos, 1, [get_rid()])
+		var query = PhysicsRayQueryParameters3D.create(pos, target_pos, 1, [get_rid()])
 		var result = space_state.intersect_ray(query)
 		if result:
-			if result.collider == player:
+			if result.collider == player or result.collider == grass:
 				idling = false
 			else:
 				idling = true
@@ -42,7 +51,7 @@ func _physics_process(_delta: float) -> void:
 	if not idling:
 		global_rotation.x = lerp_angle(global_rotation.x, 0.0, 0.2)
 		global_rotation.z = lerp_angle(global_rotation.z, 0.0, 0.2)
-		global_rotation.y = lerp_angle(global_rotation.y, -(Vector2(pos.x, pos.z)-Vector2(player_pos.x, player_pos.z)).angle()+0.5*PI, 0.2)
+		global_rotation.y = lerp_angle(global_rotation.y, -(Vector2(pos.x, pos.z)-Vector2(target_pos.x, target_pos.z)).angle()+0.5*PI, 0.2)
 		global_position += -global_transform.basis.z * speed
 		if lunge_cooldown.is_stopped():
 			hitter.monitoring = true
