@@ -29,7 +29,7 @@ func _physics_process(_delta: float) -> void:
 	if get_parent().has_node("grass"):
 		grass = get_parent().get_node("grass")
 		var grass_pos = grass.global_position
-		if pos.distance_to(grass_pos) <= pos.distance_to(player_pos):
+		if pos.distance_to(grass_pos) <= sight_dist and pos.distance_to(grass_pos) <= pos.distance_to(player_pos):
 			target_pos = grass_pos
 	if target_pos:
 		var space_state = get_world_3d().direct_space_state
