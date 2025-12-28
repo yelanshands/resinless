@@ -13,7 +13,7 @@ height = 1.5
 [sub_resource type="BoxMesh" id="BoxMesh_o3ao4"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_xvcgi"]
-radius = 2.5
+radius = 1.75
 
 [node name="player" type="CharacterBody3D"]
 script = ExtResource("1_naiu8")

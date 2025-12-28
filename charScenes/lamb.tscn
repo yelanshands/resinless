@@ -61,6 +61,7 @@ data = PackedVector3Array(0, 0.14999999, 0.049999997, 0.099999994, -0.14999999, 
 radius = 1.5
 
 [node name="lamb" type="RigidBody3D"]
+collision_layer = 3
 script = ExtResource("1_n01ai")
 
 [node name="body" type="MeshInstance3D" parent="."]

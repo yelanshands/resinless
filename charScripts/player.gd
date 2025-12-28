@@ -165,7 +165,7 @@ func _input(event) -> void:
 		rotation.y -= event.relative.x * cam_sens
 		spring_arm.rotation.x = clamp(spring_arm.rotation.x - (event.relative.y * cam_sens), min_cam_rot, max_cam_rot)
 
-func health_modify(amount: int) -> void:
+func player_health_modify(amount: int, _from: Node) -> void:
 	if hp + amount <= max_hp:
 		hp += amount
 		if amount > 0:
@@ -189,5 +189,5 @@ func _on_hit_window_timeout() -> void:
 
 func _on_hit_body_entered(body: Node3D) -> void:
 	print(body)
-	if body.has_method("hit"):
-		body.hit(atk)
+	if body.has_method("enemy_health_modify"):
+		body.enemy_health_modify(-atk, self)

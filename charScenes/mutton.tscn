@@ -1,8 +1,12 @@
-[gd_scene load_steps=4 format=3 uid="uid://bid7f7d5y1s3"]
+[gd_scene load_steps=5 format=3 uid="uid://bid7f7d5y1s3"]
 
-[ext_resource type="Script" uid="uid://c8bn0b0an5671" path="res://charScripts/food.gd" id="1_i27jv"]
+[ext_resource type="Script" uid="uid://c8bn0b0an5671" path="res://charScripts/mutton.gd" id="1_i27jv"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_i27jv"]
+albedo_color = Color(0.51591176, 0.14118886, 0.17916802, 1)
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_purvm"]
+material = SubResource("StandardMaterial3D_i27jv")
 top_radius = 0.25
 bottom_radius = 0.25
 height = 0.25

@@ -20,9 +20,8 @@ func _physics_process(_delta: float) -> void:
 	var target_pos: Vector3
 	var grass: RigidBody3D
 	if not is_instance_valid(player):
-		print(get_parent().get_tree_string_pretty())
+		#print(get_parent().get_tree_string_pretty())
 		player = get_parent().get_node("player")
-		print(player)
 	var player_pos = player.global_position
 	if pos.distance_to(player_pos) <= sight_dist:
 		target_pos = player_pos
@@ -60,10 +59,11 @@ func _physics_process(_delta: float) -> void:
 			lunge_cooldown.start(lunge_cd)
 
 func on_clicked() -> void:
-	print(name + "clicked!")
+	print(name + " clicked!")
 	
-func hit(amount: int) -> void:
-	hp -= amount
+func enemy_health_modify(amount: int, _from: Node) -> void:
+	if hp + amount <= max_hp:
+		hp += amount
 	if hp <= 0:
 		die()
 		
@@ -76,6 +76,11 @@ func die() -> void:
 	queue_free()
 	
 func _on_hitter_body_entered(body: Node3D) -> void:
-	if body.has_method("health_modify"):
-		body.health_modify(-1)
+	if body.has_method("player_health_modify"):
+		print(name, " ", body.name)
+		body.player_health_modify(-1, self)
+		set_deferred("monitoring", false)
+	elif body.has_method("lamb_health_modify"):
+		print(name, " ", body.name)
+		body.lamb_health_modify(-1, self)
 		set_deferred("monitoring", false)

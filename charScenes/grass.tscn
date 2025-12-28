@@ -1,12 +1,10 @@
 [gd_scene load_steps=5 format=3 uid="uid://bpkp7cg41oafv"]
 
 [ext_resource type="Script" uid="uid://bmahbvjefeh02" path="res://charScenes/grass.gd" id="1_5hvc4"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hqxyy"]
-albedo_color = Color(0.2790591, 0.52140564, 0.17208838, 1)
+[ext_resource type="Material" uid="uid://h1xyf3jwo3du" path="res://materials/grass.tres" id="2_ge1j8"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_hqxyy"]
-material = SubResource("StandardMaterial3D_hqxyy")
+material = ExtResource("2_ge1j8")
 size = Vector3(0.5, 0.5, 0.5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_hqxyy"]

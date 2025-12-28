@@ -1,10 +1,12 @@
-[gd_scene load_steps=13 format=3 uid="uid://ca7budyrdntl0"]
+[gd_scene load_steps=16 format=3 uid="uid://ca7budyrdntl0"]
 
-[ext_resource type="Script" uid="uid://t7djkjhgf2ta" path="res://charScripts/box.gd" id="1_v08fl"]
-[ext_resource type="PackedScene" uid="uid://bid7f7d5y1s3" path="res://charScenes/mutton.tscn" id="2_purvm"]
-[ext_resource type="PackedScene" uid="uid://btkekl8rpf317" path="res://charScenes/player.tscn" id="3_purvm"]
-[ext_resource type="PackedScene" uid="uid://qdcp781qpjee" path="res://charScenes/lamb.tscn" id="5_cxlql"]
-[ext_resource type="PackedScene" uid="uid://bpkp7cg41oafv" path="res://charScenes/grass.tscn" id="5_tn6pu"]
+[ext_resource type="Script" uid="uid://borsekk00cyrl" path="res://levelScripts/survival.gd" id="1_bhego"]
+[ext_resource type="Script" uid="uid://t7djkjhgf2ta" path="res://charScripts/box.gd" id="2_ccs0v"]
+[ext_resource type="PackedScene" uid="uid://bid7f7d5y1s3" path="res://charScenes/mutton.tscn" id="3_5shvq"]
+[ext_resource type="PackedScene" uid="uid://8268hd4int60" path="res://charScenes/tree_1.tscn" id="4_3hg8f"]
+[ext_resource type="PackedScene" uid="uid://btkekl8rpf317" path="res://charScenes/player.tscn" id="5_d0b0a"]
+[ext_resource type="PackedScene" uid="uid://qdcp781qpjee" path="res://charScenes/lamb.tscn" id="6_a2aia"]
+[ext_resource type="PackedScene" uid="uid://bpkp7cg41oafv" path="res://charScenes/grass.tscn" id="7_4br8w"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_purvm"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -18,17 +20,26 @@ background_mode = 2
 sky = SubResource("Sky_cxlql")
 tonemap_mode = 2
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pt7bu"]
+albedo_color = Color(0.06344323, 0.14304966, 0.0069713783, 1)
+
 [sub_resource type="BoxMesh" id="BoxMesh_3ycbf"]
-size = Vector3(10, 1, 10)
+material = SubResource("StandardMaterial3D_pt7bu")
+size = Vector3(100, 1, 100)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_o3ao4"]
-size = Vector3(10, 1, 10)
+size = Vector3(100, 1, 100)
 
 [sub_resource type="BoxMesh" id="BoxMesh_v08fl"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_v08fl"]
 
-[node name="test" type="Node3D"]
+[node name="survival" type="Node3D"]
+script = ExtResource("1_bhego")
+
+[node name="lambSpawn" type="Timer" parent="."]
+one_shot = true
+autostart = true
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
@@ -59,7 +70,7 @@ shape = SubResource("BoxShape3D_v08fl")
 [node name="box2" type="RigidBody3D" parent="world"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 1.5, 4.5)
 collision_layer = 5
-script = ExtResource("1_v08fl")
+script = ExtResource("2_ccs0v")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="world/box2"]
 mesh = SubResource("BoxMesh_v08fl")
@@ -76,15 +87,19 @@ mesh = SubResource("BoxMesh_v08fl")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="world/box3"]
 shape = SubResource("BoxShape3D_v08fl")
 
-[node name="mutton" parent="world" instance=ExtResource("2_purvm")]
+[node name="mutton" parent="world" instance=ExtResource("3_5shvq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
 
-[node name="player" parent="." instance=ExtResource("3_purvm")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+[node name="tree1" parent="world" instance=ExtResource("4_3hg8f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 0)
 
-[node name="lamb" parent="." instance=ExtResource("5_cxlql")]
+[node name="player" parent="." instance=ExtResource("5_d0b0a")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 1.5, -7.2903805)
+
+[node name="lamb" parent="." instance=ExtResource("6_a2aia")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5436456, 1.9476359)
-collision_layer = 3
 
-[node name="grass" parent="." instance=ExtResource("5_tn6pu")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5054584, 1.2365652, 0)
+[node name="grass" parent="." instance=ExtResource("7_4br8w")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5054584, 1.2365652, -3.4199028)
+
+[connection signal="timeout" from="lambSpawn" to="." method="_on_lamb_spawn_timeout"]
