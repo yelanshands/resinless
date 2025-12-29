@@ -51,6 +51,7 @@ func _ready() -> void:
 	height = collision.shape.size.y
 
 func _process(_delta: float) -> void:
+	print(global_position)
 	collision.rotation = doodle.rotation
 	if flattened_recovering:
 		global_position.y = lerp(global_position.y, prerecover_pos + height, flatten_speed*0.75)

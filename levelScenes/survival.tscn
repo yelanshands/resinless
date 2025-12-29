@@ -93,6 +93,30 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
 [node name="tree1" parent="world" instance=ExtResource("4_3hg8f")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 0)
 
+[node name="tree2" parent="world" instance=ExtResource("4_3hg8f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.8907747, 0, -4.9976015)
+
+[node name="tree3" parent="world" instance=ExtResource("4_3hg8f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.33122826, 0, 9.48096)
+
+[node name="tree4" parent="world" instance=ExtResource("4_3hg8f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8557749, 0, 13.995393)
+
+[node name="tree5" parent="world" instance=ExtResource("4_3hg8f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.160003, 0, 3.6512518)
+
+[node name="tree6" parent="world" instance=ExtResource("4_3hg8f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.6774693, 0, -9.92649)
+
+[node name="tree7" parent="world" instance=ExtResource("4_3hg8f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.525093, 0, -9.92649)
+
+[node name="tree8" parent="world" instance=ExtResource("4_3hg8f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.215744, 0, 2.219531)
+
+[node name="tree9" parent="world" instance=ExtResource("4_3hg8f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.215744, 0, 2.219531)
+
 [node name="player" parent="." instance=ExtResource("5_d0b0a")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 1.5, -7.2903805)
 

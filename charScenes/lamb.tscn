@@ -167,4 +167,8 @@ shape = SubResource("SphereShape3D_n01ai")
 wait_time = 3.0
 one_shot = true
 
+[node name="healthbar" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75, 0)
+billboard = 2
+
 [connection signal="body_entered" from="hitter" to="." method="_on_hitter_body_entered"]

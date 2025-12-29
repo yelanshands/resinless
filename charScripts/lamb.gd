@@ -4,6 +4,7 @@ const mutton = preload("uid://bid7f7d5y1s3")
 @onready var player: CharacterBody3D = get_parent().get_node("player")
 @onready var hitter: Area3D = $hitter
 @onready var lunge_cooldown: Timer = $lunge_cooldown
+@onready var healthbar: Label3D = $healthbar
 
 @export var max_hp: int = 5
 var hp: int = max_hp
@@ -14,6 +15,9 @@ var hp: int = max_hp
 
 var drop_y_offset: float = 0.5
 var idling: bool = true
+
+func _ready() -> void:
+	healthbar.text = "❤︎".repeat(hp)
 
 func _physics_process(_delta: float) -> void:
 	var pos = global_position
@@ -64,6 +68,7 @@ func on_clicked() -> void:
 func enemy_health_modify(amount: int, _from: Node) -> void:
 	if hp + amount <= max_hp:
 		hp += amount
+	healthbar.text = "❤︎".repeat(hp)
 	if hp <= 0:
 		die()
 		
